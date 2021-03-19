@@ -1,0 +1,169 @@
+
+/* GLOBAL STYLES
+-------------------------------------------------- */
+/* Padding below the footer and lighter body text */
+
+body {
+/*  padding-top: 3rem;
+  padding-bottom: 3rem;
+  color: #5a5a5a;*/
+}
+
+
+/* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+
+/* Carousel base class */
+.carousel {
+  margin-bottom: 4rem;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+  bottom: 3rem;
+  z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel-item {
+  /*height: 32rem;*/
+  height: 27rem;
+  background-color: #777;
+}
+.carousel-item > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  /*height: 32rem;*/
+}
+
+
+/* MARKETING CONTENT
+-------------------------------------------------- */
+
+/* Center align the text within the three columns below the carousel */
+.marketing .col-lg-4 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.marketing h2 {
+  font-weight: 400;
+}
+.marketing .col-lg-4 p {
+  margin-right: .75rem;
+  margin-left: .75rem;
+}
+
+
+/* Featurettes
+------------------------- */
+
+.featurette-divider {
+  margin: 5rem 0; /* Space out the Bootstrap <hr> more */
+}
+
+/* Thin out the marketing headings */
+.featurette-heading {
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -.05rem;
+}
+
+
+/* RESPONSIVE CSS
+-------------------------------------------------- */
+
+@media (min-width: 40em) {
+  /* Bump up size of carousel content */
+  .carousel-caption p {
+    margin-bottom: 1.25rem;
+    font-size: 1.25rem;
+    line-height: 1.4;
+  }
+
+  .featurette-heading {
+    font-size: 50px;
+  }
+}
+
+@media (min-width: 62em) {
+  .featurette-heading {
+    margin-top: 7rem;
+  }
+}
+
+.carousel-indicators li {
+    position: relative;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    width: 30px;
+    height: 30px;
+    margin-right: 3px;
+    margin-left: 3px;
+    /* text-indent: -999px; */
+     text-indent: 0; 
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+
+.carousel-indicators {
+    position: absolute;
+    right: 0;
+    bottom: -65px;
+}
+
+.oddeven:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.05);
+}
+.product-list-item{
+    border: 1px #ccc solid;
+    min-height: 100px;
+}
+.product-list-item img {
+    margin: 5px;
+}
+
+.card-group *{
+    color:  #6c757d;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea, select[name] {
+/*    padding: 1%;
+    border: 1px solid #EAEAEA;
+    line-height: 20px;
+    width: 95%;
+    margin: 0 0 30px;
+    background-color: #F8F8F8;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;*/   
+}
+.prod_properties ul li div div ul li div {
+    clear: both;
+}/*
+.prod_properties ul li div div ul li div div{
+    float:right;
+}*/
+.prod_properties ul li div div ul li div div:first-child{
+    color: #6c757d;
+    float:left;
+}
+.prod_properties ul li div div ul li div div:last-child{
+    float:right;
+}
+.btn_cou_plus_cart,
+.btn_cou_minus_cart,
+.btn_cou_plus,
+.btn_cou_minus{
+    width: 50px;
+    text-align: center;
+}
+
+input[type="submit"]{
+    margin-bottom: 0px;
+}
+
+h1.product-title {
+    font-size: 1rem;
+}

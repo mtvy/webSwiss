@@ -1,0 +1,1456 @@
+<?php
+
+/* 
+ * class.MLELabGroups.php
+ */
+include_once DSHOP_DIR.'lend.php';
+
+class MedLabLabGroupFields extends lend{
+    public function __construct() {
+        $this->init();
+        $this->init_process();
+    }
+    
+    public function init(){
+            $sql = "CREATE TABLE " . '$dsp_fields' . " (
+                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                 `name` VARCHAR(16) NOT NULL comment '',
+                 `weigh` int(11) unsigned DEFAULT '0' NOT NULL comment '',
+                 `active` int(1) unsigned DEFAULT '1' NOT NULL comment '',
+                 `title` VARCHAR(64) NOT NULL comment '',
+                 `tpl` VARCHAR(32) NOT NULL comment '',
+                 `type` VARCHAR(32) NOT NULL comment '',
+                 `search` int(1) unsigned DEFAULT '1' NOT NULL comment '',
+                 `size` int(11) unsigned DEFAULT '0' NOT NULL comment '',
+                 `flsize` int(11) unsigned DEFAULT '0' NOT NULL comment '',
+                 `unsigned` int(1) unsigned DEFAULT '0' NOT NULL comment '',
+                 `zerofill` int(1) unsigned DEFAULT '0' NOT NULL comment '',
+                 `def` VARCHAR(256) NOT NULL comment '',
+                 `vars` text NOT NULL,
+                 `desc` text NOT NULL,
+                 `help` text NOT NULL,
+                 PRIMARY KEY (`id`),
+                 INDEX weigh (weigh),
+                 UNIQUE INDEX name (name),
+                 INDEX title (title)
+               )
+               ENGINE=InnoDB AUTO_INCREMENT=0 comment='ds_product attr fields';";
+        // список мета тегов
+        $fields=[];
+        $nm=$this->nm;
+        $fields['title']='Название';
+        $fields['address']='Адрес';
+        $fields['ip']='Ip';
+        $fields['port']='Port';
+        $fields['sender']='Sender';
+        $fields['password']='Passwort';
+        $fields['use_access']='Доступ';
+//        $fields['name']='name';
+//        $fields['weigh']='weigh';
+//        $fields['active']='active';
+//        $fields['title']='title';
+//        $fields['tpl']='tpl';
+//        $fields['type']='type';
+//        $fields['search']='search';
+//        $fields['size']='size';
+//        $fields['flsize']='flsize';
+//        $fields['unsigned']='unsigned';
+//        $fields['zerofill']='zerofill';
+//        $fields['def']='def';
+//        $fields['vars']='vars';
+//        $fields['desc']='desc';
+//        $fields['help']='help';
+        
+//        $fields['dump']='dump';
+        $this->meta_fields = $fields;
+        
+
+        // список мета тегов
+        $fields=[];
+        $nm=$this->nm;
+        $fields['title']='Название группы лаборантов';
+        $fields['address']='Адрес группы лаборантов';
+        $fields['ip']='Ip для доступа к ЛИС';
+        $fields['port']='порт для доступа к ЛИС';
+        $fields['sender']='имя пользователя для доступа к ЛИС';
+        $fields['password']='пароль для доступа к ЛИС';
+        $fields['use_access']='использовать отдельный доступ к ЛИС';
+//        $fields['name']='имя поля в базе';
+//        $fields['weigh']='вес поля в списке';
+//        $fields['active']='используется/не используется';
+//        $fields['title']='заголовок';
+//        $fields['tpl']='шаблон ввода';
+//        $fields['type']='тип поля в базе';
+//        $fields['search']='наличие индекса';
+//        $fields['size']='количество символов';
+//        $fields['flsize']='кол-во символов после запятой';
+//        $fields['unsigned']='только положительные';
+//        $fields['zerofill']='дополнять результат нулями';
+//        $fields['def']='значение по умолчанию';
+//        $fields['vars']='список значений для select';
+//        $fields['desc']='описание';
+//        $fields['help']='подсказка';
+        $fields['dump']='отладочноые данные';
+        $this->meta_desc = $fields;
+        
+
+        // типы шаблонов поля метатегов
+        $ftpl=[];
+        $fields['title']='td_i_';
+        $fields['address']='td_ta_';
+        $fields['ip']='td_i_';
+        $fields['port']='td_i_';
+        $fields['sender']='td_i_';
+        $fields['password']='td_p_';
+        $fields['use_access']='td_s_';
+//        $fields['name']='td_i_';
+//        $fields['weigh']='td_d_';
+//        $fields['active']='td_s_';
+//        $fields['title']='td_i_';
+//        $fields['tpl']='td_s_';
+//        $fields['type']='td_s_';
+//        $fields['search']='td_s_';
+//        $fields['size']='td_d_';
+//        $fields['flsize']='td_d_';
+//        $fields['unsigned']='td_s_';
+//        $fields['zerofill']='td_s_';
+//        $fields['def']='td_ta_';
+//        $fields['vars']='td_ta_';
+//        $fields['desc']='td_ta_';
+//        $fields['help']='td_ta_';
+        $fields['dump']='td_t_';
+        $this->meta_ftpl = $fields;
+
+        // значения метатегов
+        $ftpl=[];
+        $ftpl=[];
+        $fields['title']='';
+        $fields['address']='';
+        $fields['ip']=get_option('medlab_connect_ip','');
+        $fields['port']=get_option('medlab_connect_port','');
+        $fields['sender']=get_option('medlab_connect_sender','');
+        $fields['password']=get_option('medlab_connect_pass','');
+        $fields['use_access']='0';
+//        $fields['name']='';
+//        $fields['weigh']='0';
+//        $fields['active']='0';
+//        $fields['title']='';
+//        $fields['tpl']='td_ta_';
+//        $fields['type']='text';
+//        $fields['search']='0';
+//        $fields['size']='0';
+//        $fields['flsize']='0';
+//        $fields['unsigned']='0';
+//        $fields['zerofill']='0';
+//        $fields['def']='';
+//        $fields['vars']='';
+//        $fields['desc']='';
+//        $fields['help']='';
+        $fields['dump']='';
+//        $ftpl[$nm.'pid']=isset($_GET['pid'])?((int)$_GET['pid']):'';
+//        $ftpl[$nm.'code']='';
+        $this->meta_val = $fields;
+
+        // варианты значений метатегов
+        $en = [1=>'Да',0=>'Нет'];
+                    $ftps = [];
+                    $ftps['date'] = 'DATE ';
+                    $ftps['time'] = 'TIME ';
+                    $ftps['datetime'] = 'DATETIME ';
+                    $ftps['tinytext'] = 'TINYTEXT ';
+                    $ftps['text'] = 'TEXT ';
+                    $ftps['mediumtext'] = 'MEDIUMTEXT ';
+                    $ftps['longtext'] = 'LONGTEXT ';
+                    $ftps['varchar'] = "VARCHAR(size) ";
+                    $ftps['char'] = "CHAR(size) ";
+                    $ftps['int'] = "int(size) ";
+                    $ftps['integer'] = "INTEGER(size) ";
+                    $ftps['bigint'] = "BIGINT(size) ";
+                    $ftps['real'] = "REAL(size,flsize) ";
+                    $ftps['double'] = "DOUBLE(size,flsize) ";
+                    $ftps['float'] = "FLOAT(size,flsize) ";
+                    $ftps['decimal'] = "DECIMAL(size,flsize) ";
+                    $ftps['numeric'] = "NUMERIC(size,flsize) ";
+                    $tps = [];
+                    $tps['td_ta_'] = 'textarea';
+                    $tps['td_i_'] = 'text';
+                    $tps['td_d_'] = 'number';
+//                    $tps['td_o_'] = 'number';
+                    $tps['td_s_'] = 'select';
+                    $tps['td_t_'] = 'text only';
+        $ftpl=[];
+        $fields['title']=false;
+        $fields['address']=false;
+        $fields['ip']=false;
+        $fields['port']=false;
+        $fields['sender']=false;
+        $fields['password']=false;
+        $fields['use_access']=$en;
+//        $fields['name']=false;
+//        $fields['weigh']=false;
+//        $fields['active']=$en;
+//        $fields['title']=false;
+//        $fields['tpl']=$tps;
+//        $fields['type']=$ftps;
+//        $fields['search']=$en;
+//        $fields['size']=false;
+//        $fields['flsize']=false;
+//        $fields['unsigned']=$en;
+//        $fields['zerofill']=$en;
+//        $fields['def']=false;
+//        $fields['vars']=false;
+//        $fields['desc']=false;
+//        $fields['help']=false;
+        $fields['dump']=false;
+        $this->meta_vars = $fields;
+    }
+    /**
+     * шаблоны полей меттатегов
+     */
+    public function init_process(){
+        
+		global $wpdb;
+        $dsp_attr= $wpdb->prefix . "dsp_attr";
+        $dsp_fields= $wpdb->prefix . "dsp_fields";
+        $ml_labgroups = $wpdb->prefix . "ml_groups";
+        $field = [];
+        $ft = filter_input(INPUT_POST,'form_type',FILTER_SANITIZE_STRING);
+        $fid = filter_input(INPUT_GET,'fid',FILTER_SANITIZE_NUMBER_INT);
+        
+        
+        $maxweigh = 0;
+//        $q= "select max(`weigh`) from `$dsp_fields` ";
+//        $maxweigh = $wpdb->get_var($q);
+        
+        if($fid){
+            echo '<input type="hidden" name="fid" value="'.$fid.'">';
+            $q= "select * from `$ml_labgroups` where `id` = '$fid'";
+            $field = $wpdb->get_row($q,ARRAY_A);
+        }else{
+//            $q= "select max(`weigh`)+1 as 'weigh',max(`id`) as 'name' from `$dsp_fields` ";
+//            $field_ = $wpdb->get_row($q,ARRAY_A);
+//            $field=['name'=>'f_'.$field_['name'],'weigh'=>$field_['weigh']];
+//            $maxweigh = $field_['weigh'];
+        }
+//        $oldweigh = $field['weigh'];
+//            $this->_notice( '<div> 1 </div>');
+        if($ft){
+            switch($ft){
+                case 'mlg_list':
+//                    $this->updateListField();
+                    break;
+                case 'mlg_add':
+//                    $this->addField();
+                    $fid = $this->updateField(false,$maxweigh);
+//                    $this->updateWeigh($fid,$oldweigh);
+                    break;
+                case 'mlg_edit':
+                    $fid  = filter_input(INPUT_POST,'fid',FILTER_SANITIZE_NUMBER_INT);
+                    $this->updateField($fid,$maxweigh);
+//                    $this->updateWeigh($fid,$oldweigh);
+                    break;
+                case 'mlg_remove':
+                    break;
+            }
+        }
+        $tab  = filter_input(INPUT_GET,'tab',FILTER_SANITIZE_STRING);
+        if($tab){
+            switch($tab){
+                case 'add_lab_group':
+                    break;
+                case 'edit_lab_group':
+                    break;
+                case 'delete_lab_group':
+                    foreach($this->meta_ftpl as &$tpl){
+                        $tpl = 'td_t_';
+                    }
+                    break;
+                case 'list_lab_groups':
+                default:
+                    break;
+            }
+        }
+        if($fid){
+            echo '<input type="hidden" name="fid" value="'.$fid.'">';
+            $q= "select * from `$ml_labgroups` where `id` = '$fid'";
+            $field = $wpdb->get_row($q,ARRAY_A);
+        }else{
+//            $q= "select max(`weigh`)+1 as 'weigh',max(`id`) as 'name' from `$dsp_fields` ";
+//            $field_ = $wpdb->get_row($q,ARRAY_A);
+//            $field=['name'=>'f_'.$field_['name'],'weigh'=>$field_['weigh']];
+        }
+        
+//        $this->meta_fields['dump'] = '<$field>';
+        
+//        $this->meta_val['dump'] = '<pre>'.print_r($field,1).'</pre>';
+//        $this->meta_val['dump'] .= '<pre>'.print_r($_POST,1).'</pre>';
+        
+        $hook = 'dsp__init_fields__dspfield';
+//        add_action('ds__init_meta_fields__dsproduct', [$this,'ds__init_meta_fields__dsproduct'], 3, 1 );
+//        do_action($hook,[$this]);
+        
+//            $this->_notice( '<div> 5 </div>');
+        $this->init_meta_tpls();
+        $this->init_list_tpls();
+        $this->display_meta_box($field);
+//            $this->_notice( '<div> 6 </div>');
+        
+    }
+    /**
+     * шаблоны полей меттатегов
+     */
+    public function init_list_tpls(){
+        $ftpl=[];
+    // input text
+    $ftpl['td_h_']=<<<td
+        <!-- __label__ -- __desc__ -->
+            <input id="__id__" type="hidden" name="__name__" value="__val__" class="" />
+td;
+    $ftpl['td_p_']=<<<td
+        <tr>
+            <th><label for="__for__">__label__</label>__desc__</th>
+            <td><input id="__id__" type="password" name="__name__" value="__val__" class="regular-text" /></td>
+        </tr>
+td;
+        $this->meta_tpls += $ftpl;
+    }
+
+    public static function removeField ( $fid=false) {
+        if( !$fid)return;
+        global $wpdb;
+        $dsp_fields= $wpdb->prefix . "dsp_fields";
+        $ml_labgroups = $wpdb->prefix . "ml_groups";
+        
+//        $q= "select * from `$dsp_fields` where `id` = '$fid'";
+//        $field = $wpdb->get_row($q,ARRAY_A);
+//        
+//        $q= "select `weigh` from `$dsp_fields` where `id` = '$fid'";
+//        $oldweigh = $wpdb->get_var($q);
+        
+        $q= "delete from `$ml_labgroups` where `id` = '$fid'";
+        $wpdb->query($q);
+        
+//        $q= "update `$dsp_fields` set `weigh` = `weigh`-1 where  `weigh` >= '$oldweigh' ";
+//        $wpdb->query($q);
+//            $this->_notice( '<div> 4 </div>');
+        $m = '<b>Удалено поле: '.$field['title'].' ['.$field['name'].'] </b>';
+        echo '<div class="notice notice-success is-dismissible"> <p>'. $m .'</p></div>';
+        return $field;
+    }
+
+    public function updateWeigh ( $fid=false, $oldweigh = false) {
+        if( !$fid)return;
+        global $wpdb;
+        $dsp_fields= $wpdb->prefix . "dsp_fields";
+        $q= "select `weigh` from `$dsp_fields` where `id` = '$fid'";
+        $newweigh = $wpdb->get_var($q);
+        if($newweigh == $oldweigh || !$fid)return;
+        if($newweigh < $oldweigh){
+            $q= "update `$dsp_fields` set `weigh` = `weigh`+1 where `id` <> '$fid' and `weigh` >= '$newweigh' and `weigh` <= '$oldweigh' ";
+        }else{
+            $q= "update `$dsp_fields` set `weigh` = `weigh`-1 where `id` <> '$fid' and `weigh` <= '$newweigh' and `weigh` >= '$oldweigh' ";
+        }
+        $wpdb->query($q);
+//            $this->_notice( '<div> 4 </div>');
+    }
+
+    public function updateField( $fid=false,$maxweigh=0) {
+        global $wpdb;
+        $tab_fields= $wpdb->prefix . $this->table_name . "_fields";
+        $ml_labgroups = $wpdb->prefix . "ml_groups";
+//        $tab_fields = $ml_labgroups;
+//        $q= "select * from `$tab_fields` order by `weigh`";
+//        $fields = $wpdb->get_results($q,ARRAY_A);
+        
+        $fields = [];
+        $fields[] = ['name'=>'title','type'=>'text'];
+        $fields[] = ['name'=>'address','type'=>'text'];
+        $fields[] = ['name'=>'ip','type'=>'text'];
+        $fields[] = ['name'=>'port','type'=>'text'];
+        $fields[] = ['name'=>'sender','type'=>'text'];
+        $fields[] = ['name'=>'password','type'=>'text'];
+        $fields[] = ['name'=>'use_access','type'=>'int'];
+        
+        $values = [];
+        foreach($fields as $field){
+            $name = $field['name'];
+            $type = $field['type'];
+            if (!filter_has_var(INPUT_POST, $name)) continue;
+            $filter = FILTER_SANITIZE_STRING;
+            $intTypes = ['int','integer','bigint',];
+            if(in_array($type, $intTypes))$filter = FILTER_SANITIZE_NUMBER_INT;
+			$value = filter_input(INPUT_POST,$name,$filter);
+			$values[$name]= "`$name` = '$value'";
+            
+//            $this->meta_fields[$name] = $field['title'];
+//            $this->meta_ftpl[$name] = $field['tpl'];
+//            $this->meta_val[$name] = $field['def'];
+//            $this->meta_vars[$name] = false;
+//            $vars = unserialize($field['vars']);
+//            if(count($vars))$this->meta_vars[$name] = $vars;
+//            $this->meta_desc[$name] = $field['desc'];
+        }
+        if(count($values)==0)return;
+        $values = implode(', ', $values);
+//        $tab_value= $wpdb->prefix . $this->table_name . "_value";
+//        $tab_value = $ml_labgroups;
+        
+        $q = "insert into $ml_labgroups set " . $values;
+        if($fid)
+            $q = "update  $ml_labgroups set " . $values . " where `id` = '$fid'";
+        $wpdb->query($q);
+//        $this->_notice( $q);
+        
+        $notice = '<div> Добавлены данные </div>';
+        if($fid)
+            $notice = '<div> Обновлены данные </div>';
+        
+        if(!$fid){
+            $fid = $wpdb->insert_id;
+        }
+        $this->last_id = $fid;
+        
+//            $this->_notice( '<div> 2 </div>');
+//        $this->updateAttr($fid);
+        $this->_notice( $notice);
+        return $fid;
+    }
+
+    public function _old_updateField( $fid=false,$maxweigh=0) {
+        global $wpdb;
+        $dsp_attr= $wpdb->prefix . "dsp_attr";
+        $dsp_fields= $wpdb->prefix . "dsp_fields";
+        $ml_labgroups = $wpdb->prefix . "ml_groups";
+//        $fields['ip']='td_i_';
+//        $fields['port']='td_i_';
+//        $fields['sender']='td_i_';
+//        $fields['password']='td_p_';
+//        $fields['use_access']='td_s_';
+        $set = array(
+			'title'   => filter_input(INPUT_POST,'title',FILTER_SANITIZE_STRING),
+			'address'   => filter_input(INPUT_POST,'address',FILTER_SANITIZE_STRING),
+			'ip'   => filter_input(INPUT_POST,'ip',FILTER_SANITIZE_STRING),
+			'port'   => filter_input(INPUT_POST,'port',FILTER_SANITIZE_STRING),
+			'sender'   => filter_input(INPUT_POST,'sender',FILTER_SANITIZE_STRING),
+			'password'   => filter_input(INPUT_POST,'password',FILTER_SANITIZE_STRING),
+			'use_access'   => filter_input(INPUT_POST,'use_access',FILTER_SANITIZE_NUMBER_INT),
+//			'id'            => 'ID',
+//			'weigh'   => filter_input(INPUT_POST,'weigh',FILTER_SANITIZE_NUMBER_INT),
+//			'title'   => filter_input(INPUT_POST,'title',FILTER_SANITIZE_STRING),
+//			'name'   => filter_input(INPUT_POST,'name',FILTER_SANITIZE_STRING),
+//			'active'   => filter_input(INPUT_POST,'active',FILTER_SANITIZE_NUMBER_INT),
+//			'tpl'   => filter_input(INPUT_POST,'tpl',FILTER_SANITIZE_STRING),
+//			'type'   => filter_input(INPUT_POST,'type',FILTER_SANITIZE_STRING),
+//			'search'   => filter_input(INPUT_POST,'search',FILTER_SANITIZE_NUMBER_INT),
+//			'size'   => filter_input(INPUT_POST,'size',FILTER_SANITIZE_NUMBER_INT),
+//			'flsize'   => filter_input(INPUT_POST,'flsize',FILTER_SANITIZE_NUMBER_INT),
+//			'unsigned'   => filter_input(INPUT_POST,'unsigned',FILTER_SANITIZE_NUMBER_INT),
+//			'zerofill'   => filter_input(INPUT_POST,'zerofill',FILTER_SANITIZE_NUMBER_INT),
+//			'def'   => filter_input(INPUT_POST,'def',FILTER_SANITIZE_STRING),
+//			'vars'   => filter_input(INPUT_POST,'vars',FILTER_SANITIZE_STRING),
+//			'desc'   => filter_input(INPUT_POST,'desc',FILTER_SANITIZE_STRING),
+//			'help'   => filter_input(INPUT_POST,'help',FILTER_SANITIZE_STRING),
+		);
+//        $setvars = explode("\n",$set['vars']);
+//        $vars=[];
+//        if(strlen(trim($set['vars']))){
+//            foreach($setvars as $v){
+//                $v=explode(':',trim($v));
+//                $k=$v[0];
+//                if(isset($v[1]))$v = $v[1];
+//                else $v = $v[0];
+//                $vars[$k] = $v;
+//            }
+//        }
+//        $set['vars'] = serialize($vars);
+        extract($set);
+//        
+//        if(!$weigh)$weigh=0;
+//        if($weigh<0)$weigh=0;
+//        if($weigh>$maxweigh)$weigh=$maxweigh;
+        
+//        $q = "insert into $dsp_fields set `name` = '$name', `weigh` = '$weigh', `active` = '$active', `title` = '$title',"
+//                . " `tpl` = '$tpl', `type` = '$type', `search` = '$search', `size` = '$size', "
+//                . " `flsize` = '$flsize', `unsigned` = '$unsigned', `zerofill` = '$zerofill',"
+//                . " `def` = '$def', `vars` = '$vars', `desc` = '$desc', `help` = '$help'";
+//        if($fid)
+//        $q = "update  $dsp_fields set `name` = '$name', `weigh` = $weigh, `active` = '$active', `title` = '$title',"
+//                . " `tpl` = '$tpl', `type` = '$type', `search` = '$search', `size` = '$size', "
+//                . " `flsize` = '$flsize', `unsigned` = '$unsigned', `zerofill` = '$zerofill',"
+//                . " `def` = '$def', `vars` = '$vars', `desc` = '$desc', `help` = '$help'"
+//                . " where `id` = '$fid'";
+        
+        $q = "insert into $ml_labgroups set `title` = '$title', `address` = '$address'";
+        if($fid)
+        $q = "update  $ml_labgroups set `title` = '$title', `address` = '$address'"
+                . " where `id` = '$fid'";
+        $wpdb->query($q);
+        if(!$fid){
+            $fid = $wpdb->insert_id;
+        }
+        
+//            $this->_notice( '<div> 2 </div>');
+//        $this->updateAttr($fid);
+        return $fid;
+    }
+    public function updateAttr($fid){
+		global $wpdb;
+               
+        $dsp_attr= $wpdb->prefix . "dsp_attr";
+        $dsp_fields= $wpdb->prefix . "dsp_fields";
+        $q= "show create table `$dsp_attr` ";
+        $fields = explode("\n",$wpdb->get_var($q,1));
+        $fs = [];
+        foreach($fields as $f){
+            $f = trim($f);
+//                echo '$f<pre>'.print_r($f,1).'</pre>';
+//                echo '$f<pre>'.print_r(str_split($f),1).'</pre>';
+            if($f[0] == '`'){
+                $matches=null;
+                $pattern = '/^`([0-9_a-zA-Z]+)`/'; 
+                if(preg_match($pattern, $f, $matches)){ 
+                    if(isset($matches[1])){
+                        $fs[]=$matches[1];
+                    }
+                }
+            }
+        }
+
+        $dsp_fields= $wpdb->prefix . "dsp_fields";
+        $q= "select * from `$dsp_fields` where `id` = '$fid' order by `weigh`";
+        $fields = $wpdb->get_results($q,ARRAY_A);
+
+        foreach($fields as $field){
+            // text varchar int float
+            $name = $field['name'];
+//            $object->meta_fields[$name] = $field['title'];
+//            $object->meta_ftpl[$name] = $field['tpl'];
+//            $object->meta_val[$name] = $field['def'];
+//            $object->meta_vars[$name] = false;
+//            $vars = unserialize($field['vars']);
+//            if(count($vars))$object->meta_vars[$name] = $vars;
+
+            $ftps = [];
+            $ftps['date'] = 'DATE NOT NULL';
+            $ftps['time'] = 'TIME NOT NULL';
+            $ftps['datetime'] = 'DATETIME NOT NULL';
+            $ftps['tinytext'] = 'TINYTEXT NOT NULL';
+            $ftps['text'] = 'text NOT NULL';
+            $ftps['mediumtext'] = 'MEDIUMTEXT NOT NULL';
+            $ftps['longtext'] = 'LONGTEXT NOT NULL';
+            $ftps['varchar'] = "VARCHAR(_size_) NOT NULL DEFAULT ''";
+            $ftps['char'] = "CHAR(_size_) NOT NULL DEFAULT ''";
+            $ftps['int'] = "int(_size_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+            $ftps['integer'] = "INTEGER(_size_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+            $ftps['bigint'] = "BIGINT(_size_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+            $ftps['real'] = "REAL(_size_,_flsize_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+            $ftps['double'] = "DOUBLE(_size_,_flsize_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+            $ftps['float'] = "FLOAT(_size_,_flsize_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+            $ftps['decimal'] = "DECIMAL(_size_,_flsize_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+            $ftps['numeric'] = "NUMERIC(_size_,_flsize_) _UNSIGNED_ _ZEROFILL_ NOT NULL DEFAULT '0'";
+
+            $r = [];
+            $r['_size_'] = $field['size'];
+            $r['_flsize_'] = $field['flsize'];
+            $r['_UNSIGNED_'] = $field['unsigned']?'UNSIGNED':'';
+            $r['_ZEROFILL_'] = $field['zerofill']?'ZEROFILL':'';
+            $ftps = strtr($ftps[$field['type']],$r);
+
+            $q = "alter table `$dsp_attr` add $field[name] $ftps ";
+            if(in_array($name,$fs)){
+                $q = "alter table `$dsp_attr` CHANGE COLUMN `$field[name]` `$field[name]` $ftps ";
+            }
+            $wpdb->query($q);
+            
+//            $this->n( '$q<pre>'.$q.'</pre>');
+//            $this->_notice( '<pre>'.$q.'</pre>');
+//            $this->_notice( '<div>'.$q.'</div>');
+
+            if($field['search'] == 1){
+                $q = "alter table `$dsp_attr` add index {$field['name']}  ({$field['name']}) ";
+                if(in_array($field['type'], ['text','text','text','text',]))
+                $q = "alter table `$dsp_attr` add FULLTEXT {$field['name']}  ({$field['name']}) ";
+                $wpdb->query($q);
+            }
+
+        }
+//            $this->_notice( '<div> 3 </div>');
+    }
+	public function css(){
+		?>
+		<style>
+			.th_desc{ font-weight:normal; }
+		</style>
+		<?php
+	}
+
+    /**
+     * отрисовка полей метатегов
+     * @param type $movie_review
+     */
+    public function display_meta_box( $field ) {
+        global $ht;
+        // Retrieve current name of the Director and Movie Rating based on review ID
+    //    $movie_director = esc_html( get_post_meta( $movie_review->ID, 'movie_director', true ) );
+    //    $movie_rating = intval( get_post_meta( $movie_review->ID, 'movie_rating', true ) );
+
+        
+        $fields=$this->meta_fields;
+//        $tr='';
+//        foreach($fields as $f=>$l){
+//            $r=[];
+//            $r['_v_']=esc_html( get_post_meta( $movie_review->ID, $f, true ) );
+//            $r['_n_']=$f;
+//            $r['_l_']=$l;
+//    //        $r['']='';
+//            $tr.=strtr($this->meta_tpls['tpl_i_tr'],$r);
+//        }
+//            $r=[];
+//            $r['_tr_']=$tr;
+//            $tab = strtr($this->meta_tpls['tpl_i_tab'],$r);
+//                echo $tab;
+                
+    $tds=[];
+    foreach($fields as $f=>$v){
+//        echo $v;
+        $r=[];
+        $r['__id__']=$f;
+        $r['__for__']=$f;
+        $r['__name__']=$f;
+        $r['__label__']=$v;
+        $r['__val__']='';
+        $r['__desc__']='';
+            $r['__i_class__']='';
+            $r['__placeholder__']='';
+        
+            $r['__cols__']=70;
+            $r['__rows__']=5;
+        
+        if(isset($this->meta_desc[$f])){
+            $at=['class'=>'th_desc'];
+            $r['__desc__']=$ht->f('div',$this->meta_desc[$f],$at);
+        }
+        if(isset($this->meta_val[$f]))
+            $r['__val__']=$this->meta_val[$f];
+        if(isset( $field[$f])){
+//            $r['__val__']=esc_html( $field[$f] );
+            $r['__val__']=( $field[$f] );
+            if($f == 'vars'){
+                $fds = [];
+                $fd = unserialize($field[$f]);
+                foreach($fd as $sok=>$sov){
+                    $fds[] = "$sok:$sov";
+                }
+                $r['__val__']=implode("\n", $fds );// implode
+            }
+        }
+            if($this->meta_ftpl[$f] == 'td_ta_'){
+                $rows =  count(explode("\n",$r['__val__']));//esc_attr
+                $r['__rows__'] += $rows;
+            }
+            if($this->meta_ftpl[$f] == 'td_t_'){
+                $r['__val__'] = nl2br($r['__val__']);
+            }
+        if(
+                $this->meta_ftpl[$f]=='td_s_'
+                && $this->meta_vars[$f]
+//                && count($this->meta_vars[$f])>0
+            ){
+            $val=[];
+            $val['res']=$r['__val__'];
+            $val['items']=$this->meta_vars[$f];
+            $r['__val__']=$this->_cf_select($val);
+            
+        }
+        $tds[]=strtr($this->meta_tpls[$this->meta_ftpl[$f]],$r);
+    }
+    /* ============================ */
+        $q=[];
+        $q['redirect_to']=get_the_permalink( get_option('ds_id_page_item') );
+        $redirect_to = filter_input(INPUT_GET, 'redirect_to', FILTER_DEFAULT);
+        if($redirect_to){
+//            wp_redirect( urldecode($redirect_to ) );
+            $q['redirect_to']=$redirect_to;
+        }
+        $r=[];
+        $r['__id__']='redirect_to';
+        $r['__for__']='redirect_to';
+        $r['__name__']='redirect_to';
+        $r['__label__']='redirect_to';
+        $r['__val__']=$q['redirect_to'];
+//        $tds[]=strtr($this->meta_tpls['td_i_'],$r);
+    /* ============================ */
+    $r=[];
+//    ech*o implode("\n",$this->meta_tpls);
+//    echo implode("\n",$tds);
+    $r['_tr_']=implode("\n",$tds);
+//    $r['__rows__']=implode("\n",$tds);
+//    echo strtr($table__,$r);
+//    $r=[];
+//    $r['_tr_']=$tr;
+    $tab = strtr($this->meta_tpls['tpl_i_tab'],$r);
+    $this->css();
+        echo $tab;
+            /** / if(0){
+                ?>
+        <table>
+            <tr>
+                <td style="width: 150px">Movie Rating</td>
+                <td>
+                    <select style="width: 100px" name="movie_review_rating">
+                    <?php
+                    // Generate all items of drop-down list
+                    for ( $rating = 5; $rating >= 1; $rating -- ) {
+                    ?>
+                        <option value="<?php echo $rating; ?>" <?php echo selected( $rating, $movie_rating ); ?>>
+                        <?php echo $rating; ?> stars <?php } ?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <?php  } /**/
+    }
+    
+    public static function get_lab_group_list(){
+        global $wpdb;
+        $ml_labgroups = $wpdb->prefix . "ml_groups";
+        $q= "select * from `$ml_labgroups`  ";
+        $field = $wpdb->get_results($q,ARRAY_A);
+        $groups = [];
+        foreach($field as $v){
+            $groups [(int)trim($v['id'])] = $v['title'];
+        }
+        $sel=[];
+//        $sel[-1] = 'Выбрать группу';
+        $sel[0] = 'Выбрать группу';
+        $sel+=$groups;
+        return $sel;
+    }
+    public static function get_lab_group_address($group=0){
+        global $wpdb;
+        $ml_labgroups = $wpdb->prefix . "ml_groups";
+        $q= "select `address` from `$ml_labgroups` where id ='$group' ";
+        return $wpdb->get_var($q);
+    }
+}
+
+
+class MedLabLabGroupFieldList extends MedLabLabGroupFields{
+    private static $instance = null;
+	private static $initiated = false;
+    public function __construct() {
+//        $this->meta_fields = $fields;
+        $this->init();
+//        $this->init_process();
+    }
+    public static function _getFeldList(){
+		if ( ! self::$initiated ) {
+            $DShop = new MedLabLabGroupFieldList();
+            self::$instance = $DShop;
+            self::$initiated = true;
+		}
+        return  self::$instance->meta_fields;
+    }
+}
+
+
+
+class MLELabGroups{
+    public $object = null;
+    public $user = null;
+    public $page = 'lab_groups';
+    
+    public function __construct() {
+        global $ht, $aca;
+        add_filter('ds_admin_profile_block_list', [$this,'ds_admin_profile_block_list'], $priority=11, $accepted_args=3);
+        add_action('ds_admin_profile_list_init', [$this,'ds_admin_profile_list_init'], $priority=11, $accepted_args=3);
+        add_action('ds_admin_profile_save', [$this,'ds_admin_profile_save'], $priority=11, $accepted_args=2);
+        add_action('admin_menu', [$this,'options']);
+        add_filter( 'manage_users_custom_column', [$this,'manage_users_custom_column'], 10, 3 );
+//        add_action('admin_notices', [$aca,'_notices']);
+    }
+    
+    public function init(){
+        global $ht, $aca;
+//        $roles = get_option('wp_user_roles',[]);
+//        $aca->n($ht->pre('$wpdb->dbname'));
+//        $this->initDB();
+    }
+    public function brokeTable($tab_name=false){
+        global $wpdb;
+        $fs = [];
+        if(!$tab_name)return $fs;
+        $q= "show create table `$tab_name` ";
+        $sql = $wpdb->get_var($q,1);
+        $fs = $this->brokeQuery($sql);
+        return $fs;
+    }
+    public function brokeQuery($sql=false){
+        global $ht, $aca;
+        $fs = [];
+        if(!$sql)return $fs;
+        $fields = explode("\n",$sql);
+        foreach($fields as $f){
+            $f = trim($f);
+//                echo '$f<pre>'.print_r($f,1).'</pre>';
+//                echo '$f<pre>'.print_r(str_split($f),1).'</pre>';
+            if($f[0] == '`'){
+                $matches=null;
+//                $pattern = '/^`([0-9_a-zA-Z]+)`(.*)/'; 
+                $pattern = '/^`([0-9_a-zA-Z]+)`([^,]*)/'; 
+                ob_start();
+                if(preg_match($pattern, $f, $matches)){ 
+                    if(isset($matches[1])){
+//                        $fs[]=$matches[1];
+                        $fs[$matches[1]]=$matches[2];
+                    }
+                }
+                $err = ob_get_clean();
+                if($err){
+//                    add_log($f);
+//                    add_log($err);
+                    $aca->n($ht->pre($f));
+                    $aca->n($ht->pre($err));
+                }
+            }
+        }
+        return $fs;
+    }
+    public function initDB(){
+        global $wpdb;
+        global $ht, $aca;
+
+        $table_ml_groups = $wpdb->prefix . "ml_groups";
+//        $table_ml_nr_resv = $wpdb->prefix . "ml_nr_resv";
+        $table_postmeta = $wpdb->prefix . "postmeta";
+//        $q = "insert into $table_ml_nr
+//            select post_id, post_id as 'order_id', meta_value as 'nr'
+//            from $table_postmeta
+         // тут мы добавляем таблицу в базу данных
+        $sql = "CREATE TABLE " . $table_ml_groups . " (
+            id int(10) NOT NULL AUTO_INCREMENT,
+            `title` VARCHAR(64) NOT NULL comment '',
+            `address` text NOT NULL,
+            `ip` VARCHAR(32) NOT NULL comment '',
+            `port` VARCHAR(16) NOT NULL comment '',
+            `sender` VARCHAR(16) NOT NULL comment '',
+            `password` VARCHAR(64) NOT NULL comment '',
+            `use_access` int(1) NOT NULL comment '',
+            PRIMARY KEY (`id`),
+            UNIQUE KEY title (title)
+          )
+          ENGINE=InnoDB;";
+//            where meta_key = 'dso_query_nr' ";
+        if($wpdb->get_var("SHOW TABLES LIKE '$table_ml_groups'") != $table_ml_groups) {
+
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+//            $wpdb->query($q);
+        }
+        
+        $fs = [];
+        $fs = $this->brokeTable($table_ml_groups);
+        $fs_d = $this->brokeQuery($sql);
+        
+        $fields = MedLabLabGroupFieldList::_getFeldList();
+//        add_log($fs);
+//        add_log($fs_d);
+//        add_log($fields);
+        $aca->n($ht->pre($fs));
+        $aca->n($ht->pre($fs_d));
+        $aca->n($ht->pre($fields));
+        
+        $parent_field = false;
+        $add_cou = 0;
+        foreach($fields as $name=>$title){
+            if(array_key_exists($name,$fs_d) && !array_key_exists($name,$fs)){
+                $q = "alter table `$table_ml_groups` add `$name` {$fs_d[$name]} ";
+                if($parent_field)
+                    $q .= " after `$parent_field` ";
+//                add_log($q);
+                $aca->n($ht->pre($q));
+                $wpdb->query($q);
+                $add_cou ++;
+            }
+            
+//            if(array_key_exists($name,$fs)){
+//                $q = "alter table `$dsp_attr` CHANGE COLUMN `{$field['name']}` `{$field['name']}` $ftps ";
+//            }else
+//            if(array_key_exists($old_name,$fs)){
+//                $q = "alter table `$dsp_attr` CHANGE COLUMN `$old_name` `{$field['name']}` $ftps ";
+//            }
+//            $wpdb->query($q);
+            $parent_field = $name;
+        }
+        if($add_cou){
+            $m  = "В таблицу `$table_ml_groups` добавлено $add_cou новых полей.";
+        }else{
+            $m  = "В таблицу `$table_ml_groups` не добавлено новых полей.";
+        }
+        $aca->n($m);
+            
+            
+//        if($wpdb->get_var("SHOW TABLES LIKE '$table_ml_nr_resv'") != $table_ml_nr_resv) {
+//         // тут мы добавляем таблицу в базу данных
+//            $sql = "CREATE TABLE " . $table_ml_nr_resv . " (
+//                id int(10) NOT NULL AUTO_INCREMENT,
+//                num int(10) DEFAULT '0' NOT NULL,
+//                order_id int(10) DEFAULT '0' NOT NULL,
+//                nr DECIMAL(11) UNSIGNED DEFAULT '0' NOT NULL,
+//                UNIQUE KEY id (id),
+//                UNIQUE KEY num (num),
+//                UNIQUE KEY order_id (order_id),
+//                UNIQUE KEY nr (nr)
+//              )
+//              ENGINE=InnoDB;";
+//
+//            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+////            dbDelta($sql);
+//        }
+//        $aca->n($ht->pre($q));
+            
+//        $roles = get_option('wp_user_roles',[]);
+//        $aca->n($ht->pre($wpdb->dbname));
+//        $aca->n($ht->pre($q));
+//        $aca->n($ht->pre($wpdb->get_var($q)));
+        
+
+    }
+    public function ds_admin_profile_block_list($profile_list,$object,$user){
+        $this->object =  $object;
+        $this->user =  $user;
+        $profile_list[]=['class'=>'MLELabGroups','object'=>$this,'method'=>'initFieldsGeneral2','inited'=>true,'type'=>'class','isstatic'=>false,'weigh'=>1];
+        $profile_list[]=['class'=>'MLELabGroups','object'=>$this,'method'=>'initFieldsAgent','inited'=>true,'type'=>'class','isstatic'=>false,'weigh'=>1];
+        $profile_list[]=['class'=>'MLELabGroups','object'=>$this,'method'=>'addFieldsDoctor','inited'=>true,'type'=>'class','isstatic'=>false,'weigh'=>2];
+        $profile_list[]=['class'=>'MLELabGroups','object'=>$this,'method'=>'addFieldsWarehouse','inited'=>true,'type'=>'class','isstatic'=>false,'weigh'=>3];
+        
+        foreach($profile_list as $k=>$i){
+            if($i['class'] == 'ProfileFields' && $i['method'] == 'initFieldsRequisites')
+                unset($profile_list[$k]);
+        }
+        return $profile_list;
+    }
+    public function ds_admin_profile_list_init($profile_list,$object,$user){
+//        add_log($object->blocks);
+        $this->object =  $object;
+        $this->user =  $user;
+        foreach($object->blocks as $k=>$i){
+            if($i == 'requisites')
+                unset($object->blocks[$k]);
+//            if($i == 'agent')
+//                unset($object->blocks[$k]);
+        }
+//        add_log($object->blocks);
+        $blocks = [];
+        $weigh = 2;
+        $num = 0;
+        foreach($object->blocks as $k => $item){
+            if($num == $weigh)
+                $blocks[] = 'requisites';
+            if($num == $weigh)
+                $blocks[] = 'agent';
+            $num++;
+            $blocks[]=$item;
+        }
+//        add_log($blocks);
+        if(!in_array('requisites',$blocks))
+            $blocks[] = 'requisites';
+        if(!in_array('agent',$blocks))
+            $blocks[] = 'agent';
+//        $object->blocks[] = 'requisites';
+        $blocks[] = 'warehouse';
+        $object->blocks = $blocks;
+        $object->blocksLabels['requisites'] = 'Реквизиты лаборанта'; // Реквизиты лаборанта
+        $object->tabClass['requisites'] = '';
+        $object->blocksLabels['agent'] = 'Представитель'; // Реквизиты лаборанта
+        $object->tabClass['agent'] = '';
+        $object->blocksLabels['warehouse'] = 'Склад'; // Реквизиты лаборанта
+        $object->tabClass['warehouse'] = '';
+    }
+    public function manage_users_custom_column($val, $column_name, $user_id ) {
+        switch ($column_name) {
+            case 'lab_group' :
+//                $sel=self::get_lab_group_list();s
+                $sel=MedLabLabGroupFields::get_lab_group_list();
+                $g= get_the_author_meta( 'lab_group', $user_id );
+                if(isset($sel[$g]))
+                    $val .= $sel[$g];
+                break;
+            default:
+                break;
+        }
+        return $val;
+    }
+    public function addFieldsWarehouse($user){
+        global $wpdb;
+        $obj = $this->object;
+        $key = 'warehouse';
+//        $obj->fields[$key][] = 'd_rate';
+//        $obj->labels[$key][] = 'Процент врача от заказа';
+//        $obj->valdef[$key][] = 0;
+        
+        $obj->fields[$key][] = 'warehouse_id';
+        $obj->labels[$key][] = 'Привязан к складу';
+        $obj->valdef[$key][] = 0;
+        //$sel=MedLabLabGroupFields::get_lab_group_list();
+//        $sel = [0=>'Нет'];
+//        $sel  += DShopExtensionMedLab::_get_agents();
+//        $obj->fsel_opts[$key]['agent_id'] = $sel;
+        $sel = [0=>'Нет'];
+//        $sel  += DShopExtensionMedLab::_get_agents();
+        $q = "select id,title from `".$wpdb->prefix."wsd_dbc_wh_house`";
+        $res = $wpdb->get_results($q,ARRAY_A);
+        foreach($res as $wh){
+            $sel[$wh['id']] = $wh['title'];
+        }
+        $obj->fsel_opts[$key]['warehouse_id'] = $sel;
+        
+        $val=[];
+        foreach ($obj->fields[$key] as $fk=>$fn) {
+//            $val[$fk] = esc_attr(get_the_author_meta($fn, $user->ID));
+//            $val[$fk] = esc_attr(get_user_meta($user->ID, $fn, true));
+            $val[$fk] = (get_user_meta($user->ID, $fn, true));
+            $val[$fk] = $val[$fk]?$val[$fk]:$obj->valdef[$key][$fk];
+        }
+        $obj->values[$key] = $val;
+//        $obj->fieldtpls[$key][] = 'td_d_';
+        $obj->fieldtpls[$key][] = 'td_s_';
+//        add_log($obj->fields);
+    }
+    public function addFieldsDoctor($user){
+        $obj = $this->object;
+        $key = 'doctor';
+        $obj->fields[$key][] = 'd_rate';
+        $obj->labels[$key][] = 'Процент врача от заказа';
+        $obj->valdef[$key][] = 0;
+        
+        $obj->fields[$key][] = 'agent_id';
+        $obj->labels[$key][] = 'Представитель врача';
+        $obj->valdef[$key][] = 0;
+        //$sel=MedLabLabGroupFields::get_lab_group_list();
+        $sel = [0=>'Нет'];
+        $sel  += DShopExtensionMedLab::_get_agents();
+        $obj->fsel_opts[$key]['agent_id'] = $sel;
+        
+        $val=[];
+        foreach ($obj->fields[$key] as $fk=>$fn) {
+//            $val[$fk] = esc_attr(get_the_author_meta($fn, $user->ID));
+//            $val[$fk] = esc_attr(get_user_meta($user->ID, $fn, true));
+            $val[$fk] = (get_user_meta($user->ID, $fn, true));
+            $val[$fk] = $val[$fk]?$val[$fk]:$obj->valdef[$key][$fk];
+        }
+        $obj->values[$key] = $val;
+        $obj->fieldtpls[$key][] = 'td_d_';
+        $obj->fieldtpls[$key][] = 'td_s_';
+//        add_log($obj->fields);
+    }
+    public function initFieldsAgent($user){
+//        add_log(get_user_meta($user->ID));
+        /*
+         * 
+сайт, телефон, лицензия, почта. 
+- все единое будет 
+меняются адрес, имя лаборанта
+         */
+        $obj = $this->object;
+        $field=[];
+        $key = 'agent';
+//        $field[] = 'blank_address';
+        $field[] = 'a_rate';
+        $obj->fields[$key] = $field;
+        
+        $label=[];
+//        $label[] = 'Адрес лаборатории';
+        $label[] = 'Процент агента от заказа';
+        $obj->labels[$key] = $label;
+        
+//        $sel=self::get_lab_group_list();
+//        $sel=$obj::get_lab_group_list();
+//        $sel=MedLabLabGroupFields::get_lab_group_list();
+//        $obj->fsel_opts[$key]['lab_group'] = $sel;
+        
+        $def=[];
+//        $def[] = '';
+        $def[] = 0;
+        $obj->valdef[$key] = $def;
+        
+        $val=[];
+        foreach ($field as $fk=>$fn) {
+//            $val[$fk] = esc_attr(get_the_author_meta($fn, $user->ID));
+//            $val[$fk] = esc_attr(get_user_meta($user->ID, $fn, true));
+            $val[$fk] = (get_user_meta($user->ID, $fn, true));
+            $val[$fk] = $val[$fk]?$val[$fk]:$obj->valdef[$key][$fk];
+        }
+        $obj->values[$key] = $val;
+//        add_log($obj->values);
+        
+        $ftpl=[];
+//        $ftpl[] = 'td_ta_';
+//        $ftpl[] = 'td_s_';
+        $ftpl[] = 'td_d_';
+        $obj->fieldtpls[$key] = $ftpl;
+    
+//    $ftpl[] = 'td_i_'; // input text
+//    $ftpl[] = 'td_t_'; // only output text
+//    $ftpl[] = 'td_d_'; // input number
+    }
+    public function initFieldsGeneral2($user){
+//        add_log(get_user_meta($user->ID));
+        /*
+         * 
+сайт, телефон, лицензия, почта. 
+- все единое будет 
+меняются адрес, имя лаборанта
+         */
+        $obj = $this->object;
+        $field=[];
+        $key = 'requisites';
+//        $field[] = 'blank_address';
+        $field[] = 'lab_group';
+        $obj->fields[$key] = $field;
+        
+        $label=[];
+//        $label[] = 'Адрес лаборатории';
+        $label[] = 'Группа лаборантов';
+        $obj->labels[$key] = $label;
+        
+//        $sel=self::get_lab_group_list();
+//        $sel=$obj::get_lab_group_list();
+        $sel=MedLabLabGroupFields::get_lab_group_list();
+        $obj->fsel_opts[$key]['lab_group'] = $sel;
+        
+        $def=[];
+//        $def[] = '';
+        $def[] = -1;
+        $obj->valdef[$key] = $def;
+        
+        $val=[];
+        foreach ($field as $fk=>$fn) {
+//            $val[$fk] = esc_attr(get_the_author_meta($fn, $user->ID));
+//            $val[$fk] = esc_attr(get_user_meta($user->ID, $fn, true));
+            $val[$fk] = (get_user_meta($user->ID, $fn, true));
+            $val[$fk] = $val[$fk]?$val[$fk]:$obj->valdef[$key][$fk];
+        }
+        $obj->values[$key] = $val;
+//        add_log($obj->values);
+        
+        $ftpl=[];
+//        $ftpl[] = 'td_ta_';
+        $ftpl[] = 'td_s_';
+        $obj->fieldtpls[$key] = $ftpl;
+    
+//    $ftpl[] = 'td_i_'; // input text
+//    $ftpl[] = 'td_t_'; // only output text
+//    $ftpl[] = 'td_d_'; // input number
+    }
+    public function ds_admin_profile_save($object,$user_id){
+    }
+    
+    /*
+     * =============================
+     */
+    public function page_wrapper() {
+        
+    //    $atr = func_get_args();
+    //    add_log($atr);
+        // тут уже будет находиться содержимое страницы
+        global $ccab_page, $aca;
+        ?><div class="wrap">
+        <div id="icon-themes" class="icon32"></div>
+        <h2>Группы лаборантов</h2>
+       <?php
+        ob_start();
+        settings_errors();
+        
+        $active_tab = 'list_lab_groups';
+        if( isset( $_GET[ 'tab' ] ) ) {
+            $active_tab = $_GET[ 'tab' ];
+        } // end if
+        $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'list_lab_groups';
+        $tab  = filter_input(INPUT_GET,'tab',FILTER_SANITIZE_STRING);
+
+        global $display_sub_button;
+        $display_sub_button = 1;
+        
+        global $form_action;
+        $form_action = 'options.php';
+        
+//        $r_page = $this->rpage;
+//        $form_action = "edit.php?post_type={$this->name}&page=".$r_page.'_fields';
+        $form_action = "users.php?page=".'lab_groups';
+        if($tab && $tab == 'delete_lab_group'){
+//            $form_action.='&tab='.$tab;
+        }else
+        if($tab){
+            $form_action.='&tab='.$tab;
+        }
+        
+        $tabs = [];
+        $tabs['list_lab_groups'] = 'List';
+        $tabs['add_lab_group'] = 'Add';
+        $fid  = filter_input(INPUT_GET,'fid',FILTER_SANITIZE_NUMBER_INT);
+        if($fid && $tab == 'edit_lab_group'){
+            $tabs['edit_lab_group'] = 'Edit';
+            $form_action.='&fid='.$fid;
+        }
+        if($fid && $tab == 'delete_lab_group'){
+            $tabs['delete_field'] = 'Delete';
+//            $form_action.='&fid='.$fid;
+        }
+        
+//        $tabs = apply_filters('ds_dsproduct_settings_extml__tabs', $tabs, $this);
+        $tabs['updatedb'] = 'Update DB';
+        /*
+         * <a href="edit.php?post_type=<?=$this->name?>&page=<?=$this->rpage?>_fields&tab=<?=$tn?>" class="nav-tab <?php echo $active_tab == $tn ? 'nav-tab-active' : ''; ?>"><?=$tt?></a>
+            
+         */
+    ?>
+        <h2 class="nav-tab-wrapper">
+            <?php
+                foreach ($tabs as $tn => $tt) { // name => title
+                    ?>
+            <a href="users.php?page=lab_groups&tab=<?=$tn?>" class="nav-tab <?php echo $active_tab == $tn ? 'nav-tab-active' : ''; ?>"><?=$tt?></a>
+            <?php
+                }
+            /*
+            <a href="edit.php?post_type=<?=$this->name?>&page=<?=$this->rpage?>_settings.php&tab=display_options" class="nav-tab <?php echo $active_tab == 'display_options' ? 'nav-tab-active' : ''; ?>">Display Options</a>
+             <a href="edit.php?post_type=<?=$this->name?>&page=<?=$this->rpage?>_settings.php&tab=robokassa_options" class="nav-tab <?php echo $active_tab == 'robokassa_options' ? 'nav-tab-active' : ''; ?>">Robokassa Options</a>
+            */
+//            do_action('ds_dsproduct_settings_extml__add_tab_link', $this,$this->name,$this->rpage, $active_tab);
+            ?>
+        </h2>
+        
+        <form method="post" enctype="multipart/form-data" action="<?=$form_action?>" >
+            <?php
+            
+        if( $active_tab == 'updatedb' ) {
+            $this->initDB();
+        }
+        if( $active_tab == 'list_lab_groups' ) {
+            echo '<input type="hidden" name="form_type" value="mlg_list">'; //  dsp_list
+            settings_fields($this->page); // меняем под себя только здесь
+            
+            global $lt;
+            $lt->display();
+//            submit_button();
+        }
+        if( $active_tab == 'add_lab_group' ) {
+            echo '<input type="hidden" name="form_type" value="mlg_add">';
+            settings_fields($this->page); // меняем под себя только здесь
+            
+//            $pf = new DSopProductField();
+            $pf = new MedLabLabGroupFields();
+            submit_button();
+        }
+        if( $active_tab == 'edit_lab_group' ) {
+            if($fid){
+                echo '<input type="hidden" name="form_type" value="mlg_edit">';
+                settings_fields($this->page); // меняем под себя только здесь
+
+    //            $this->build_edit();
+//                $pf = new DSopProductField();
+                $pf = new MedLabLabGroupFields();
+                submit_button();
+            }else{
+//                $r_page = $this->rpage;
+//                $form_action = "edit.php?post_type={$this->name}&page=".$r_page.'_fields';
+                $form_action = "users.php?page=".'lab_groups';
+                $m = 'Нечего редактировать.<br/>';
+                echo '<div class=""> <h3>'. $m .'</h3></div>';
+                $ccl = sprintf( '<a href="%s">%s</a>', $form_action, __('Cancel','hb-users') );
+                echo $ccl;
+            }
+        }
+        if( $active_tab == 'delete_lab_group' ) {
+//            var_dump($fid);
+            if($fid){
+                echo '<input type="hidden" name="form_type" value="mlg_remove">';
+                echo '<input type="hidden" name="fid" value="'.$fid.'">';
+                echo '<input type="hidden" name="isremove" value="ok">';
+                settings_fields($this->page); // меняем под себя только здесь
+
+                global $wpdb;
+                $dsp_fields= $wpdb->prefix . "dsp_fields";
+
+                $q= "select * from `$dsp_fields` where `id` = '$fid'";
+                $field = $wpdb->get_row($q,ARRAY_A);
+
+                $m = 'Вы действительно хотите удалить запись:<br/>'
+                    .$field['title'].' ['.$field['name'].'] ?';
+                echo '<div class=""> <h3>'. $m .'</h3></div>';
+
+                $m = '<b>Удаляемое поле, будет удалено безвозвратно.</b>';
+                echo '<div class="notice notice-warning is-dismissible"> <p>'. $m .'</p></div>';
+
+                $btn = get_submit_button(__( 'Remove' ));
+    //            $form_action
+//                $r_page = $this->rpage;
+//                $form_action = "edit.php?post_type={$this->name}&page=".$r_page.'_fields';
+                $form_action = "users.php?page=".'lab_groups';
+                $ccl = sprintf( '<a href="%s">%s</a>', $form_action, __('Cancel','hb-users') );
+                $r = ['</p>'=>' &nbsp; '.$ccl.'</p>'];
+                echo strtr($btn,$r);
+    //            $this->build_edit();
+//                $pf = new DSopProductField();
+                $pf = new MedLabLabGroupFields();
+            }else{
+//                $r_page = $this->rpage;
+//                $form_action = "edit.php?post_type={$this->name}&page=".$r_page.'_fields';
+                $form_action = "users.php?page=".'lab_groups';
+                $m = 'Нечего удалять.<br/>';
+                echo '<div class=""> <h3>'. $m .'</h3></div>';
+                $ccl = sprintf( '<a href="%s">%s</a>', $form_action, __('Cancel','hb-users') );
+                echo $ccl;
+            }
+        }
+        if( $active_tab == 'robokassa_options' ) {
+//            settings_fields($this->page); // меняем под себя только здесь
+////            settings_fields('ccab_options'); // меняем под себя только здесь
+//            // (название настроек)
+//            do_settings_sections($this->page);
+//            do_settings_sections('kassa_'.$this->page);
+//    //        do_settings_sections('shortcodes_'.$ccab_page);
+//    //        do_settings_sections('shortcodes_'.$ccab_page);
+//    //        echo 'show shortcodes';
+////            ccab_show_sortcodes();
+        }
+        
+//        do_action('ds_dsproduct_settings_extml__do_tab_sections', $this,$this->page, $active_tab);
+//        if($display_sub_button) submit_button();
+            ?>
+        </form>
+       <?php
+        if( $active_tab == 'display_options' ) {
+        } 
+        if( $active_tab == 'robokassa_options' ) {
+//            do_settings_sections('info_'.$this->page);
+        } // end if/else
+//        do_action('ds_dsproduct_settings_extml__do_tab_footer_info', $this,$this->page, $active_tab);
+       /*
+        * 
+            <p class="submit">  
+                    <input type="submit" class="button-primary"
+                           value="<?php _e('Save Changes') ?>" />  
+            </p>
+        */
+        $out=ob_get_clean();
+//        showLogInfo('admin');
+        echo $out;
+       ?>
+    </div><?php
+    $aca->_notices();
+    }
+    
+    public function options() {
+//        $page = $this->page;
+//        $page = null;
+//        $page = 'options.php';
+        $page = 'dshop.php'; // страница настроек магазина
+//        $r_page = $this->rpage;
+    //    $ parent slug
+    //    $ page title
+    //    $ menu title
+    //    $ capability
+    //    $ menu slug
+    //    $ function
+//		$ptype_obj = get_post_type_object( $this->name );
+//        $page = $ptype_obj->show_in_menu;
+//        $this->n('<pre>'.print_r($ptype_obj,1).'</pre>');
+//		$ptype_obj = get_post_type_object( 'post' );
+//		$ptype_obj = get_post_type_object( 'dspayment' );
+//        $page = $ptype_obj->show_in_menu;
+//        $this->n('<pre>'.print_r($ptype_obj,1).'</pre>');
+//        $screen = get_current_screen();
+//    global $_parent_pages;
+//        $this->n('<pre>:'.print_r($_parent_pages,1).'</pre>');
+        
+//        add_submenu_page( $page, 'Shortcodes', 'Shortcodes', 'manage_options',
+//            ''.$r_page.'/shortcodes.php', 'ccab_page_shortcodes_wrapper');  
+//        add_submenu_page( $page, 'Параметры', 'Параметры', 'manage_options',
+//            "edit.php?post_type={$this->name}".'&page='.$r_page.'_settings.php', [$this,'page_wrapper']);
+        
+        
+        $page = 'dshop.php'; // страница настроек магазина
+        $page = 'dshop.php'; // страница настроек магазина
+//        add_submenu_page( "edit.php?post_type={$this->name}",
+//                'Настройки товара', 'Настройки товара', 'manage_options',
+//            ''.$r_page.'__settings.php', [$this,'page_wrapper']);
+//        $hookname = add_submenu_page( "edit.php?post_type={$this->name}",
+//                'Доп поля товара', 'Доп поля товара', 'manage_options',
+//            ''.$r_page.'_fields', [$this,'page_wrapper']);
+//        $hookname = add_submenu_page( "edit.php?post_type={$this->name}",
+                
+        $hookname = add_submenu_page( "users.php",
+                'Группы лаборантов', 'Группы лаборантов', 'manage_options',
+            ''.'lab_groups', [$this,'page_wrapper']);
+        add_action( "load-$hookname", [$this,'init_table_page_load'] );
+
+        
+//		if(0)add_submenu_page(
+//                $ptype_obj->show_in_menu,
+//                $ptype_obj->labels->name,
+//                $ptype_obj->labels->all_items,
+//                $ptype_obj->cap->edit_posts,
+//                "edit.php?post_type=$ptype" );
+        
+    //    add_submenu_page( $ccab_page, 'Параметры 3', 'Параметры 3', 'manage_options',
+    //        'p3_'.$ccab_page.'', 'true_option_page2');
+
+    //        add_submenu_page($parent_slug, $page_title, $menu_title,
+    //                $capability, $menu_slug, $function);
+
+    }
+    public function init_table_page_load(){
+        
+        $fid  = filter_input(INPUT_POST,'fid',FILTER_SANITIZE_STRING);
+        $ft  = filter_input(INPUT_POST,'form_type',FILTER_SANITIZE_STRING);
+        $isok  = filter_input(INPUT_POST,'isremove',FILTER_SANITIZE_STRING);
+        if($fid){
+            if($ft=='dsp_remove'){
+                if($isok=='ok'){
+//                    $this->_notice( '<div> 0 </div>');
+                    DSopProductField::removeField($fid);
+                }
+            }
+        }
+        $ltf = 'class.DShopProductListTable.php';
+        $ltf = 'class.MLLabGroupsListTable.php';
+        require_once $ltf;
+        global $lt;
+//        $r_page = $this->rpage;
+//        $lt = new DShopProductListTable("edit.php?post_type={$this->name}&page=".$r_page.'_fields');
+        $lt = new MLLabGroupsListTable("users.php?page=".'lab_groups');
+    }
+}
+
+
+function get_option_ml_group($option='',$gid=false,$allaccess = false){
+	global $wpdb;
+
+	$option = trim( $option );
+	if ( empty( $option ) ) {
+		return false;
+	}
+    
+    if(!$gid){
+        $uid = get_current_user_id();
+        if(!$uid){
+            return false;
+        }
+        $gid = (int) get_user_meta($uid,'lab_group',1);
+    }
+    if(!$gid){
+		return false;
+    }
+    
+    $ml_groups= $wpdb->prefix . "ml_groups";
+    $suppress = $wpdb->suppress_errors();
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM `$ml_groups` WHERE id = %d LIMIT 1", $gid ), ARRAY_A);// $wpdb->options
+    $wpdb->suppress_errors( $suppress );
+    if ( is_array( $row ) && isset( $row[$option] ) && ( $row['use_access'] || $allaccess ) ) {
+        $value = $row[$option];
+    } else {
+        $value = false;
+    }
+    return $value;
+}

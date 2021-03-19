@@ -1,0 +1,42 @@
+/*
+prod_getting.css
+*/
+/* 
+    Created on : 13.05.2020, 3:14:21
+    Author     : WSD
+*/
+
+
+    .stripped-rows-h > :nth-of-type(odd) ,
+    .stripped-rows-h > div:nth-of-type(odd) {
+        /*background: #e0e0e0;*/
+        background-color: #F5F7FA;
+        background-color: rgba(0,0,0,.05);
+    }
+    .stripped-rows-h > :nth-of-type(even) ,
+    .stripped-rows-h > div:nth-of-type(even) {
+        /*background: #FFFFFF;*/
+    }
+    .stripped-rows-h > :nth-of-type(odd) ,
+    .stripped-rows-h > div:nth-of-type(odd) {
+    }
+    .stripped-rows > :nth-of-type(even) ,
+    .stripped-rows > div:nth-of-type(even) {
+        background-color: #F5F7FA;
+        background-color: rgba(0,0,0,.05);
+    }
+    .stripped-rows-h > :hover,
+    .stripped-rows > :hover,
+    .stripped-rows-h > div:hover,
+    .stripped-rows > div:hover
+    {
+        background-color: rgba(0,0,0,.075);
+    }
+    
+    ul.nav, ol.nav
+    {
+        margin: 0;
+    }
+    button.btn-delete {
+        min-width: 20px;
+    }
